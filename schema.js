@@ -13,6 +13,7 @@ export const typeDefs = gql`
   type Player {
     id: ID
     name: String
+    ign: String
     image: String
     age: Int
     team: Team
@@ -36,37 +37,51 @@ export const typeDefs = gql`
 `;
 
 const hltv = HLTV.createInstance({
-  hltvUrl: 'https://d1j2e1aix8fg66.cloudfront.net',
+  hltvUrl: 'https://hltv.org', // https://d1j2e1aix8fg66.cloudfront.net
   loadPage: async url => {
     const response = await promisify(request)(url);
     return response.body;
   }
 });
 
+async function getPlayer(id) {
+  const player = await hltv.getPlayer({id});
+  return {
+    id,
+    ...player
+  };
+}
+
+async function getTeam(id) {
+  const team = await hltv.getTeam({id});
+  return {
+    id,
+    ...team
+  };
+}
+
 export const resolvers = {
   Player: {
     team(parent) {
-      return hltv.getTeam({id: parent.team.id});
+      return getTeam(parent.team.id);
     }
   },
   Team: {
     players(parent) {
-      return Promise.all(
-        parent.players.map(player => hltv.getPlayer({id: player.id}))
-      );
+      return Promise.all(parent.players.map(player => getPlayer(player.id)));
     }
   },
   TeamRanking: {
     team(parent) {
-      return hltv.getTeam({id: parent.team.id});
+      return getTeam(parent.team.id);
     }
   },
   Query: {
     player(parent, args) {
-      return hltv.getPlayer({id: args.id});
+      return getPlayer(args.id);
     },
     team(parent, args) {
-      return hltv.getTeam({id: args.id});
+      return getTeam(args.id);
     },
     teamRankings() {
       return hltv.getTeamRanking();
