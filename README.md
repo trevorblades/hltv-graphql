@@ -1,4 +1,4 @@
-# HLTV.org GraphQL API
+# 🐓 HLTV.org GraphQL API
 
 This API wraps the unofficial [`hltv`](https://github.com/gigobyte/HLTV) Node client.
 
