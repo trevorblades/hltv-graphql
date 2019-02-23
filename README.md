@@ -11,7 +11,7 @@ Clone this repo and `cd` into it. You're going to need to create a `.env` file t
 PORT=4000
 ```
 
-Next, install the project dependencies and start up the dev server. If everything works, you'll see a message in your terminal with the URL that the API is available at.
+Next, install the project dependencies and start up the dev server. If everything works, you'll see a message in your terminal with the URL that the API is available at. 🚀
 
 ```bash
 $ npm install
