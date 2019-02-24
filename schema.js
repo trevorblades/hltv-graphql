@@ -37,7 +37,7 @@ export const typeDefs = gql`
   type Query {
     player(id: ID!): Player
     team(id: ID!): Team
-    teamRankings: [TeamRanking]
+    teamRankings(limit: Int): [TeamRanking]
   }
 `;
 
@@ -88,8 +88,9 @@ export const resolvers = {
     team(parent, args) {
       return getTeam(args.id);
     },
-    teamRankings() {
-      return hltv.getTeamRanking();
+    async teamRankings(parent, args) {
+      const teamRankings = await hltv.getTeamRanking();
+      return teamRankings.slice(0, args.limit);
     }
   }
 };
