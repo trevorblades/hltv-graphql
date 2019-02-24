@@ -49,6 +49,16 @@ const hltv = HLTV.createInstance({
   }
 });
 
+function augmentWithId(method) {
+  return async id => {
+    const response = await method({id});
+    return {
+      ...response,
+      id
+    };
+  };
+}
+
 async function getPlayer(id) {
   const player = await hltv.getPlayer({id});
   return {
