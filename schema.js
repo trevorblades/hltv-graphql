@@ -59,21 +59,8 @@ function augmentWithId(method) {
   };
 }
 
-async function getPlayer(id) {
-  const player = await hltv.getPlayer({id});
-  return {
-    id,
-    ...player
-  };
-}
-
-async function getTeam(id) {
-  const team = await hltv.getTeam({id});
-  return {
-    id,
-    ...team
-  };
-}
+const getPlayer = augmentWithId(hltv.getPlayer);
+const getTeam = augmentWithId(hltv.getTeam);
 
 export const resolvers = {
   Player: {
