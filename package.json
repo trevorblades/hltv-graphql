@@ -14,11 +14,9 @@
   },
   "dependencies": {
     "apollo-server": "^2.4.6",
-    "axios": "^0.18.0",
     "dotenv": "^6.2.0",
     "esm": "^3.2.5",
     "graphql": "^14.1.1",
-    "hltv": "^2.12.3",
-    "request": "^2.88.0"
+    "hltv": "^2.12.3"
   }
 }

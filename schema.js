@@ -1,12 +1,11 @@
 import HLTV from 'hltv';
-import request from 'request';
 import {gql} from 'apollo-server-express';
-import {promisify} from 'util';
 
 export const typeDefs = gql`
   type Team {
     id: ID
     name: String
+    logo: String
     players: [Player]
   }
 
@@ -41,14 +40,6 @@ export const typeDefs = gql`
   }
 `;
 
-const hltv = HLTV.createInstance({
-  hltvUrl: 'https://hltv.org', // https://d1j2e1aix8fg66.cloudfront.net
-  loadPage: async url => {
-    const response = await promisify(request)(url);
-    return response.body;
-  }
-});
-
 function augmentWithId(method) {
   return async id => {
     const response = await method({id});
@@ -59,8 +50,8 @@ function augmentWithId(method) {
   };
 }
 
-const getPlayer = augmentWithId(hltv.getPlayer);
-const getTeam = augmentWithId(hltv.getTeam);
+const getPlayer = augmentWithId(HLTV.getPlayer);
+const getTeam = augmentWithId(HLTV.getTeam);
 
 export const resolvers = {
   Player: {
@@ -86,7 +77,7 @@ export const resolvers = {
       return getTeam(args.id);
     },
     async teamRankings(parent, args) {
-      const teamRankings = await hltv.getTeamRanking();
+      const teamRankings = await HLTV.getTeamRanking();
       return teamRankings.slice(0, args.limit);
     }
   }
