@@ -18,6 +18,7 @@ export const typeDefs = gql`
     age: Int
     team: Team
     country: Country
+    statistics: Statistics
   }
 
   type TeamRanking {
@@ -27,6 +28,10 @@ export const typeDefs = gql`
   type Country {
     name: String
     code: String
+  }
+
+  type Statistics {
+    rating: Float
   }
 
   type Query {
