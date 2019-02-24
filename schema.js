@@ -1,4 +1,4 @@
-import HLTV from 'hltv';
+import hltv from 'hltv';
 import {gql} from 'apollo-server-express';
 
 export const typeDefs = gql`
@@ -50,8 +50,8 @@ function augmentWithId(method) {
   };
 }
 
-const getPlayer = augmentWithId(HLTV.getPlayer);
-const getTeam = augmentWithId(HLTV.getTeam);
+const getPlayer = augmentWithId(hltv.getPlayer);
+const getTeam = augmentWithId(hltv.getTeam);
 
 export const resolvers = {
   Player: {
@@ -77,7 +77,7 @@ export const resolvers = {
       return getTeam(args.id);
     },
     async teamRankings(parent, args) {
-      const teamRankings = await HLTV.getTeamRanking();
+      const teamRankings = await hltv.getTeamRanking();
       return teamRankings.slice(0, args.limit);
     }
   }
