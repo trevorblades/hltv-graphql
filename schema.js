@@ -31,6 +31,10 @@ export const typeDefs = gql`
 
   type Statistics {
     rating: Float
+    kills: Int
+    headshots: String
+    kdRatio: Float
+    damagePerRound: Float
   }
 
   type Query {
@@ -50,8 +54,16 @@ function augmentWithId(method) {
   };
 }
 
-const getPlayer = augmentWithId(hltv.getPlayer);
 const getTeam = augmentWithId(hltv.getTeam);
+const getPlayerStats = augmentWithId(hltv.getPlayerStats);
+async function getPlayer(id) {
+  const player = await getPlayerStats(id);
+  const {image} = await hltv.getPlayer({id});
+  return {
+    ...player,
+    image
+  };
+}
 
 export const resolvers = {
   Player: {
