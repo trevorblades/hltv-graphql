@@ -1,7 +1,22 @@
-import hltv from 'hltv';
+import HLTV from 'hltv';
 import {gql} from 'apollo-server-express';
 
 export const typeDefs = gql`
+  enum MatchType {
+    Lan
+    Online
+    BigEvents
+    Majors
+  }
+
+  enum RankingFilter {
+    Top5
+    Top10
+    Top20
+    Top30
+    Top50
+  }
+
   type Team {
     id: ID
     name: String
@@ -24,6 +39,13 @@ export const typeDefs = gql`
     team: Team
   }
 
+  type PlayerRanking {
+    id: ID
+    name: String
+    rating: Float
+    player: Player
+  }
+
   type Country {
     name: String
     code: String
@@ -39,58 +61,61 @@ export const typeDefs = gql`
 
   type Query {
     player(id: ID!): Player
+    playerRanking(
+      startDate: String
+      endDate: String
+      matchType: MatchType
+      rankingFilter: RankingFilter
+    ): [PlayerRanking]
     team(id: ID!): Team
-    teamRankings(limit: Int): [TeamRanking]
+    teamRanking(
+      year: String
+      month: String
+      day: String
+      country: String
+    ): [TeamRanking]
   }
 `;
-
-function augmentWithId(method) {
-  return async id => {
-    const response = await method({id});
-    return {
-      ...response,
-      id
-    };
-  };
-}
-
-const getTeam = augmentWithId(hltv.getTeam);
-const getPlayerStats = augmentWithId(hltv.getPlayerStats);
-async function getPlayer(id) {
-  const player = await getPlayerStats(id);
-  const {image} = await hltv.getPlayer({id});
-  return {
-    ...player,
-    image
-  };
-}
 
 export const resolvers = {
   Player: {
     team(parent) {
-      return getTeam(parent.team.id);
+      return parent.team && HLTV.getTeam({id: parent.team.id});
+    },
+    async statistics(parent) {
+      const {statistics} = await HLTV.getPlayerStats({id: parent.id});
+      return statistics;
+    }
+  },
+  PlayerRanking: {
+    player(parent) {
+      return HLTV.getPlayer({id: parent.id});
     }
   },
   Team: {
     players(parent) {
-      return Promise.all(parent.players.map(player => getPlayer(player.id)));
+      return Promise.all(
+        parent.players.map(player => HLTV.getPlayer({id: player.id}))
+      );
     }
   },
   TeamRanking: {
     team(parent) {
-      return getTeam(parent.team.id);
+      return HLTV.getTeam({id: parent.team.id});
     }
   },
   Query: {
     player(parent, args) {
-      return getPlayer(args.id);
+      return HLTV.getPlayer(args);
+    },
+    playerRanking(parent, args) {
+      return HLTV.getPlayerRanking(args);
     },
     team(parent, args) {
-      return getTeam(args.id);
+      return HLTV.getTeam(args);
     },
-    async teamRankings(parent, args) {
-      const teamRankings = await hltv.getTeamRanking();
-      return teamRankings.slice(0, args.limit);
+    teamRanking(parent, args) {
+      return HLTV.getTeamRanking(args);
     }
   }
 };
