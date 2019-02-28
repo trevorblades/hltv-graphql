@@ -15,14 +15,15 @@ const server = new ApolloServer({
     const auth = basicAuth(req);
     if (auth) {
       const isValid = await keyholder.test(auth.pass);
-      if (!isValid) {
-        throw new AuthenticationError('Invalid API key');
+      if (isValid) {
+        console.log('user is authenticated!');
+        return {
+          authenticated: true
+        };
       }
     }
 
-    return {
-      authenticated: true
-    };
+    throw new AuthenticationError('Invalid API key');
   }
 });
 
