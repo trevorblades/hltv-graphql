@@ -11,6 +11,10 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   introspection: true,
+  formatError: error => {
+    console.error(error);
+    return error;
+  },
   async context({req}) {
     const isValid = await keyholder.testReq(req);
     if (isValid) {
