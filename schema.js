@@ -109,7 +109,6 @@ export const resolvers = {
       return HLTV.getPlayer(args);
     },
     playerRanking(parent, args) {
-      console.log('player ranking');
       return HLTV.getPlayerRanking(args);
     },
     team(parent, args) {
