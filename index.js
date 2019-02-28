@@ -1,5 +1,4 @@
 import Keyholder from 'keyholder';
-import basicAuth from 'basic-auth';
 import {ApolloServer, AuthenticationError} from 'apollo-server';
 import {resolvers, typeDefs} from './schema';
 
@@ -11,20 +10,13 @@ const keyholder = new Keyholder({
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  formatError: error => {
-    console.log(error);
-    return error;
-  },
+  introspection: true,
   async context({req}) {
-    const auth = basicAuth(req);
-    if (auth) {
-      const isValid = await keyholder.test(auth.pass);
-      if (isValid) {
-        console.log('user is authenticated!');
-        return {
-          authenticated: true
-        };
-      }
+    const isValid = await keyholder.testReq(req);
+    if (isValid) {
+      return {
+        authenticated: true
+      };
     }
 
     throw new AuthenticationError('Invalid API key');
