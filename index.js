@@ -11,6 +11,10 @@ const keyholder = new Keyholder({
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  formatError: error => {
+    console.log(error);
+    return error;
+  },
   async context({req}) {
     const auth = basicAuth(req);
     if (auth) {
