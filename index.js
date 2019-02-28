@@ -12,6 +12,7 @@ const server = new ApolloServer({
   resolvers,
   async context({req}) {
     const isValid = await keyholder.test(req.query.apiKey);
+    console.log('valid', isValid);
     if (!isValid) {
       throw new AuthenticationError('Invalid API key');
     }
